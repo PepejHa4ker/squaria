@@ -21,6 +21,17 @@ private const val TYPE_MAP_ARRAY: Int = 12
 
 
 @Suppress("UNCHECKED_CAST")
+/**
+ * Represents a class that serializes data from server to client into byte array.
+ * For standard types (Byte, Shore, Int, Long, Boolean, Float, Double, String),
+ * the first parameter is a byte, which denotes the data type (see constants above)
+ * and then data with the corresponding type
+ *
+ * For non standard type (ByteMap, ByteArray, Array<String>, Array<ByteMap>,
+ * the first parameter also is a byte, which denotes the data type (also see constants above),
+ * then the second parameter is a Int which denotes a data length (For Arrays, array length)
+ * and then a data to serialize
+ */
 class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
 
     init {
