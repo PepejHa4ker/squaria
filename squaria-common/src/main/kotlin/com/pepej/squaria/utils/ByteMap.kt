@@ -20,6 +20,7 @@ private const val TYPE_STRING_ARRAY: Int = 11
 private const val TYPE_MAP_ARRAY: Int = 12
 
 
+@Suppress("UNCHECKED_CAST")
 class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
 
     init {
@@ -117,47 +118,44 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
                         out.writeByte(TYPE_BOOLEAN)
                         out.writeBoolean(value)
                     }
+
+                    is ByteMap -> {
+                        out.writeByte(TYPE_MAP)
+                        val bytes = value.toByteArray()
+                        out.writeInt(bytes.size)
+                        out.write(bytes)
+                    }
+                    is ByteArray -> {
+                        out.writeByte(TYPE_BYTE_ARRAY)
+                        out.writeInt(value.size)
+                        out.write(value)
+                    }
                     else -> {
-                        when (value) {
-                            is ByteMap -> {
-                                out.writeByte(TYPE_MAP)
-                                val bytes = value.toByteArray()
-                                out.writeInt(bytes.size)
-                                out.write(bytes)
-                            }
-                            is ByteArray -> {
-                                out.writeByte(TYPE_BYTE_ARRAY)
-                                out.writeInt(value.size)
-                                out.write(value)
-                            }
-                            else -> {
-                                when (value?.javaClass) {
-                                    Array<String>::class.java -> {  // :(
-                                        out.writeByte(TYPE_STRING_ARRAY)
-                                        val array = value as Array<String>
-                                        out.writeInt(array.size)
-                                        for (i in array.indices) {
-                                            out.writeUTF(array[i])
-                                        }
-                                    }
-                                    else -> {
-                                        if (value?.javaClass != Array<ByteMap>::class.java) { // :(
-                                            throw IllegalStateException("Unknown value type ${value?.javaClass} for key '$key'")
-                                        }
-                                        out.writeByte(TYPE_MAP_ARRAY)
-                                        val array = value as Array<ByteMap>
-                                        out.writeInt(array.size)
-                                        for (i in array.indices) {
-                                            val map = array[i]
-                                            val serialized = map.toByteArray()
-                                            out.writeInt(serialized.size)
-                                            out.write(serialized)
-                                        }
-                                    }
+                        when (value?.javaClass) {
+                            Array<String>::class.java -> {  // :(
+                                out.writeByte(TYPE_STRING_ARRAY)
+                                val array = value as Array<String>
+                                out.writeInt(array.size)
+                                for (i in array.indices) {
+                                    out.writeUTF(array[i])
                                 }
+                            }
+                            Array<ByteMap>::class.java -> { // :(
+                                out.writeByte(TYPE_MAP_ARRAY)
+                                val array = value as Array<ByteMap>
+                                out.writeInt(array.size)
+                                for (i in array.indices) {
+                                    val map = array[i]
+                                    val serialized = map.toByteArray()
+                                    out.writeInt(serialized.size)
+                                    out.write(serialized)
+                                }
+                            } else -> {
+                                throw IllegalStateException("Unknown value type ${value?.javaClass} for key '$key'")
                             }
                         }
                     }
+
                 }
             }
             out.flush()
@@ -254,14 +252,19 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
                 val (key, value) = i.next()
                 sb.append(key)
                 sb.append('=')
-                val `val`: String? = if (value === this) {
-                    "(this Map)"
-                } else if (value is ByteArray) {
-                    value.contentToString()
-                } else if (value is Array<*>) {
-                    (value as Array<Any>).contentToString()
-                } else {
-                    value.toString()
+                val `val`: String = when {
+                    value === this -> {
+                        "(this Map)"
+                    }
+                    value is ByteArray -> {
+                        value.contentToString()
+                    }
+                    value is Array<*> -> {
+                        (value as Array<Any>).contentToString()
+                    }
+                    else -> {
+                        value.toString()
+                    }
                 }
                 sb.append(`val`)
                 if (!i.hasNext()) {
