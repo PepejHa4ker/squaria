@@ -29,7 +29,6 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
                 val data = DataInputStream(ByteArrayInputStream(bytes))
                 while (data.available() > 0) {
                     val key = data.readUTF()
-                    println("Read key $key")
                     val arr: ByteArray
                     when (data.readByte().toInt()) {
                         TYPE_INT -> this[key] = data.readInt()
@@ -83,7 +82,6 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
             val out = DataOutputStream(baos)
             for ((key, value) in entries) {
                 out.writeUTF(key)
-                println("Write key $key")
                 when (value) {
                     is Int -> {
                         out.writeByte(TYPE_INT)
@@ -108,7 +106,6 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
 
                     }
                     is String -> {
-                        println("Debug write String type with value $value")
                         out.writeByte(TYPE_STRING)
                         out.writeUTF(value)
                     }
