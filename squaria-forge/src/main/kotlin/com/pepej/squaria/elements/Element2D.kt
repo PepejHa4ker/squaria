@@ -3,6 +3,7 @@ package com.pepej.squaria.elements
 import com.pepej.squaria.Squaria
 import com.pepej.squaria.elements.container.Container
 import com.pepej.squaria.elements.container.Element2DWrapper
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.*
 import java.util.function.Function
 import net.minecraft.client.renderer.GlStateManager
@@ -115,24 +116,24 @@ abstract class Element2D(id: String) : Element(id), Element2DWrapper {
     val scaledHeight: Float
         get() = scaleY.render * height
 
-    fun mouseWheel(delta: Int): Boolean {
+    open fun mouseWheel(delta: Int): Boolean {
         return false
     }
 
-//    fun mouseClick(x: Int, y: Int, button: Int): Boolean {
-//        return if (click != null) {
-//            when (click.action) {
-////                URL -> CommonUtils.openUrl(click.data as String)
-////                CHAT -> CommonUtils.sendMessage(click.data as String)
-////                CALLBACK -> Texteria.sendCallbackPacket(click.data as ByteMap)
-//            }
-//            true
-//        } else {
-//            false
-//        }
-//    }
+    fun mouseClick(x: Int, y: Int, button: Int): Boolean {
+        return if (click != null) {
+            when (click!!.action) {
+                OnClick.Action.URL -> openUrl(click!!.data.getString("url"))
+                OnClick.Action.CHAT -> sendMessage(click!!.data.getString("message"))
+                OnClick.Action.CALLBACK -> Squaria.sendCallbackPacket(click!!.data)
+            }
+            true
+        } else {
+            false
+        }
+    }
 
-    fun checkHover(x: Int, y: Int, time: Long) {
+    open fun checkHover(x: Int, y: Int, time: Long) {
         hover = x >= 0 && (x < width) && (y >= 0) && (y < height)
 
     }
@@ -258,9 +259,7 @@ abstract class Element2D(id: String) : Element(id), Element2DWrapper {
             if (scaleX.render == 1.0f || scaleY.render != 1.0f) {
                 GlStateManager.scale(scaleX.render, scaleY.render, 1.0f)
             }
-//            this.callScriptFunction("_beforeRender")
             render(time)
-//            this.callScriptFunction("_afterRender")
             GlStateManager.popMatrix()
         }
     }
@@ -400,13 +399,11 @@ abstract class Element2D(id: String) : Element(id), Element2DWrapper {
         return if (r >= getAlpha(color2)) color2 else setAlpha(color2, r)
     }
 
-    abstract val width: Float
-    abstract val height: Float
+    abstract val width: Int
+    abstract val height: Int
     open val widthFluidity: Fluidity? = Fluidity.FIXED
     open val heightFluidity: Fluidity? = Fluidity.FIXED
-    override val element2D: Element2D
-        get() = this
-
+    override val element2D: Element2D = this
     override fun toString(): String {
         return this.javaClass.simpleName + "[" + super.id + "]"
     }

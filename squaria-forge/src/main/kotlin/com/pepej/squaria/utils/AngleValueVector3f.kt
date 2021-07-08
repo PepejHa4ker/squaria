@@ -1,5 +1,7 @@
 package com.pepej.squaria.utils
 
+import com.pepej.squaria.serialization.ByteMap
+
 class AngleValueVector3f(prefix: String, params: ByteMap, anim: Animation3D, def: Float = 0.0F) {
     val x: AngleFValue
     val y: AngleFValue

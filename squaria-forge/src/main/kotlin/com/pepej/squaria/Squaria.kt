@@ -1,7 +1,12 @@
 package com.pepej.squaria
 
 import com.pepej.squaria.gui.SquariaGui
+import com.pepej.squaria.serialization.ByteMap
+import io.netty.buffer.Unpooled
 import net.minecraft.client.Minecraft
+import net.minecraft.network.PacketBuffer
+import net.minecraft.network.play.client.CPacketCustomPayload
+import net.minecraft.network.play.server.SPacketCustomPayload
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
@@ -23,6 +28,20 @@ class Squaria {
         val LOG = LogManager.getLogger("Squaria")
         val mc = Minecraft.getMinecraft()
         var time = System.currentTimeMillis()
+
+        fun sendCallbackPacket(data: ByteMap) {
+            val map = ByteMap()
+            map["%"] = "callback"
+            map["data"] = data
+            sendPacket(map)
+        }
+
+        fun sendPacket(map: ByteMap) {
+            if (mc.world != null) {
+                mc.player.connection.sendPacket(SPacketCustomPayload("Squaria", PacketBuffer(Unpooled.wrappedBuffer(map.toByteArray()))))
+            }
+        }
+
     }
 
 

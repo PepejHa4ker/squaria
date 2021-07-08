@@ -1,8 +1,9 @@
 package com.pepej.squaria.elements
 
-import com.pepej.squaria.Squaria.Companion.LOG
+import com.pepej.squaria.Squaria
 import com.pepej.squaria.Squaria.Companion.mc
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
+
 import com.pepej.squaria.utils.Fluidity
 import com.pepej.squaria.utils.drawRect
 import net.minecraft.client.Minecraft
@@ -16,18 +17,18 @@ class Text(params: ByteMap) : Element2D(params) {
     override var widthFluidity = if (tWidthFluidity === Fluidity.MATCH_PARENT) Fluidity.MATCH_PARENT else Fluidity.FIXED
 
     var wordWrap: WordWrap
-    override val width: Float
+    override val width: Int
         get() {
-            var width = iWidth.toFloat()
+            var width = iWidth
             if (widthFluidity === Fluidity.MATCH_PARENT) {
-                width = (super.parent?.width ?: 0.0F) / super.scaleX.render
+                width = ((super.parent?.width ?: 0.0F) / super.scaleX.render).toInt()
             } else if (background != -1) {
-                width += 4.0f
+                width += 4
             }
             return width
         }
-    override val height
-        get() = (font.FONT_HEIGHT * text.size).toFloat()
+    override val height: Int
+        get() = (font.FONT_HEIGHT * text.size)
     var text = params.getStringArray("text")
     var font = mc.fontRenderer
     var hasShadow = params.getBoolean("shadow", true)
@@ -61,19 +62,20 @@ class Text(params: ByteMap) : Element2D(params) {
     }
 
     override fun render(time: Long) {
+        Squaria.LOG.debug("Attempt to render Text element")
         GlStateManager.enableTexture2D()
         val bgColor = if (super.hover && hoverBackground != -1) hoverBackground else background
         var w = width
         if (bgColor != -1) {
             drawRect(0.0, 0.0, w.toDouble(), height.toDouble(), setAlphaToBaseColorIfGreater(bgColor))
             GlStateManager.translate(2.0f, 0.0f, 0.0f)
-            w -= 4.0f
+            w -= 4
         }
         var i = 0
         when (align) {
             Align.CENTER -> {
                 for (str in text) {
-                    drawString(str, (w.toInt() - font.getStringWidth(str)) / 2, font.FONT_HEIGHT * i++,
+                    drawString(str, (w - font.getStringWidth(str)) / 2, font.FONT_HEIGHT * i++,
                         super.color.render)
                 }
                 return
@@ -86,7 +88,7 @@ class Text(params: ByteMap) : Element2D(params) {
             }
             Align.RIGHT -> {
                 for (str in text) {
-                    drawString(str, w.toInt() - font.getStringWidth(str), font.FONT_HEIGHT * i++, super.color.render)
+                    drawString(str, w - font.getStringWidth(str), font.FONT_HEIGHT * i++, super.color.render)
                 }
             }
         }

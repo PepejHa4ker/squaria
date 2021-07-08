@@ -1,6 +1,6 @@
 package com.pepej.squaria.api.event
 
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 

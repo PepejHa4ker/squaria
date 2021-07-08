@@ -1,7 +1,8 @@
 package com.pepej.squaria.elements
 
 import com.pepej.papi.text.Text.colorize
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
+
 
 open class Text(id: String, vararg lines: String) : Element<Text>(id, "Text") {
     var text: Array<out String>

@@ -1,31 +1,29 @@
 package com.pepej.squaria.elements
 
 import com.pepej.squaria.Squaria
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.FValue
 import com.pepej.squaria.utils.Fluidity
 import com.pepej.squaria.utils.drawRect
 import org.lwjgl.opengl.Display.getWidth
 
 open class Rectangle : Element2D {
-    override val width: Float
+    override val width: Int
         get() {
             return if (widthFluidity === Fluidity.MATCH_PARENT) {
-                (super.parent?.width ?: 0.0F) / super.scaleX.renderValue(Squaria.time)
+                ((super.parent?.width ?: 0.0F) / super.scaleX.renderValue(Squaria.time)).toInt()
             } else {
-                fWidth.renderValue(
-                    Squaria.time)
+                fWidth.renderValue(Squaria.time).toInt()
             }
         }
     override var widthFluidity: Fluidity? = null
     override var heightFluidity: Fluidity? = null
-    override val height: Float
+    override val height: Int
         get() {
             return if (heightFluidity === Fluidity.MATCH_PARENT) {
-                (super.parent?.height ?: 0.0F) / super.scaleY.renderValue(
-                    Squaria.time)
+                ((super.parent?.height ?: 0.0F) / super.scaleY.renderValue(Squaria.time)).toInt()
             } else {
-                fHeight.renderValue(Squaria.time)
+                fHeight.renderValue(Squaria.time).toInt()
             }
         }
 

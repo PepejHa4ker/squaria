@@ -1,6 +1,7 @@
 package com.pepej.squaria.world
 
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
+
 
 class Beam(id: String, var color: Int) : WorldGroup(id) {
     override fun write(map: ByteMap) {

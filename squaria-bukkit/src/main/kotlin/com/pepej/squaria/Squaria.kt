@@ -4,8 +4,8 @@ import com.pepej.papi.ap.Plugin
 import com.pepej.papi.ap.PluginDependency
 import com.pepej.papi.plugin.PapiJavaPlugin
 import com.pepej.squaria.elements.Element
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.service.PacketService
-import com.pepej.squaria.utils.ByteMap
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -23,17 +23,7 @@ class Squaria : PapiJavaPlugin() {
 
     override fun onPluginEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "Squaria")
-//        getService(BungeeCord::class.java)?.registerForwardCallbackRaw("Squaria") { data ->
-//            val map = ByteMap(data)
-//            val type = map.getString("%")
-//
-//            if (type == "callback") {
-//                Events.call(SquariaCallbackEvent(map.getMap("data")))
-//            }
-//            false
-//        }
         bindModule(PacketService)
-//    }
 
     }
 

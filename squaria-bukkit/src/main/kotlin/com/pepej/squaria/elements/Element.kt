@@ -1,5 +1,6 @@
 package com.pepej.squaria.elements
 
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.*
 
 abstract class Element<T : Element<T>> protected constructor(
@@ -98,7 +99,7 @@ abstract class Element<T : Element<T>> protected constructor(
         }
         if (click != null) {
             val c = ByteMap()
-            c["act"] = click?.action?.name
+            c["action"] = click?.action?.name
             c["data"] = click?.data
             map["click"] = c
         }

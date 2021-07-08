@@ -1,7 +1,7 @@
 package com.pepej.squaria.elements
 
 import com.pepej.squaria.gui.SquariaGui
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.FValue
 import com.pepej.squaria.utils.drawRect
 import net.minecraft.client.renderer.GlStateManager

@@ -2,6 +2,7 @@ package com.pepej.squaria.elements
 
 import com.pepej.squaria.Squaria
 import com.pepej.squaria.Squaria.Companion.LOG
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.*
 import com.pepej.squaria.utils.Function
 import net.minecraft.client.renderer.GlStateManager

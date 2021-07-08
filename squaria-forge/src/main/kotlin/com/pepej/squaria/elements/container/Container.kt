@@ -7,5 +7,5 @@ interface Container {
     val width: Float
     val height: Float
 
-    fun getElement(var1: String?): Element2D?
+    fun getElement(id: String?): Element2D?
 }

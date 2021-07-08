@@ -1,13 +1,13 @@
 package com.pepej.squaria.gui
 
 import com.pepej.squaria.Squaria.Companion.LOG
-import com.pepej.squaria.elements.Element2D
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.Reflect
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.gui.inventory.*
 import net.minecraft.inventory.IInventory
+import net.minecraft.world.BossInfo
 import java.util.*
 
 class Visibility {
@@ -26,7 +26,7 @@ class Visibility {
                 "ehover" -> selector = ElementHoverSelector(map.getString("id"))
                 "f3" -> selector = F3Selector()
                 "ee" -> selector = ElementExistsSelector(map.getString("id"))
-//                "fps" -> selector = FpsSelector()
+                "fps" -> selector = FpsSelector()
                 "gui" -> {
                     val type = map.getString("name", "").uppercase(Locale.US)
                     try {
@@ -88,15 +88,15 @@ class Visibility {
 
 //    class BossBarSelector : Selector() {
 //        override fun acceptable(mc: Minecraft, wrapper: GuiElementWrapper): Boolean {
-//            return BossStatus.bossName != null && BossStatus.statusBarTime > 0
+//            return BossInfoClient
 //        }
 //    }
 
-//    class FpsSelector : Selector() {
-//        override fun acceptable(mc: Minecraft, wrapper: GuiElementWrapper): Boolean {
-//            return mc.gameSettings.show && !mc.gameSettings.showDebugInfo
-//        }
-//    }
+    class FpsSelector : Selector() {
+        override fun acceptable(mc: Minecraft, wrapper: GuiElementWrapper): Boolean {
+            return!mc.gameSettings.showDebugInfo
+        }
+    }
 
     class TabSelector : Selector() {
         override fun acceptable(mc: Minecraft, wrapper: GuiElementWrapper): Boolean {
@@ -132,10 +132,10 @@ class Visibility {
 
     class GuiSelector(private val type: Type) : Selector() {
         override fun acceptable(mc: Minecraft, wrapper: GuiElementWrapper): Boolean {
-            return mc.currentScreen != null && mc.currentScreen!!.javaClass == type.clazz
+            return mc.currentScreen != null && mc.currentScreen?.javaClass == type.clazz
         }
 
-        enum class Type(var clazz: Class<out GuiScreen?>) {
+        enum class Type(var clazz: Class<out GuiScreen>) {
             ENCHANTMENT(GuiEnchantment::class.java), HOPPER(GuiHopper::class.java), MERCHANT(GuiMerchant::class.java), ANVIL(
                 GuiRepair::class.java),
             BEACON(GuiBeacon::class.java), BREWING_STAND(GuiBrewingStand::class.java), CHEST(
@@ -160,9 +160,8 @@ class Visibility {
         }
     }
 
-    abstract class Selector {
-        var show = false
-        abstract fun acceptable(mc: Minecraft, var2: GuiElementWrapper): Boolean
+    abstract class Selector(var show: Boolean = false) {
+        abstract fun acceptable(mc: Minecraft, wrapper: GuiElementWrapper): Boolean
         fun setShow(value: Boolean): Selector {
             show = value
             return this

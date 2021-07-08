@@ -1,5 +1,7 @@
 package com.pepej.squaria.utils
 
+import com.pepej.squaria.serialization.ByteMap
+
 
 class ValueVector3f {
     val x: FValue

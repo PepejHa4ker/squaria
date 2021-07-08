@@ -1,5 +1,6 @@
 package com.pepej.squaria.utils
 
+import com.pepej.squaria.serialization.ByteMap
 import java.util.*
 
 class Animation2D {

@@ -4,7 +4,7 @@ import com.pepej.squaria.elements.Element
 import com.pepej.squaria.elements.Element2D
 import com.pepej.squaria.elements.container.Container
 import com.pepej.squaria.elements.container.Element2DWrapper
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.Position
 import net.minecraft.client.Minecraft
 
@@ -21,16 +21,16 @@ class GuiElementWrapper : Element, Element2DWrapper {
             element.pos = Position.CENTER
         }
         if (params.containsKey("vis")) {
-            visibility = Visibility(params.getMapArray("vis"))
+            visibility = Visibility(params.getMapArray("vis")!!)
         }
     }
 
     constructor(element: Element2D, parent: Container?) : this(element, Visibility.DEFAULT, parent)
     constructor(element: Element2D, visibility: Visibility, parent: Container?) : super(element.id) {
+        this.element = element
         this.visibility = Visibility.DEFAULT
         visible = false
         element.parent = parent
-        this.element = element
         this.visibility = visibility
     }
 

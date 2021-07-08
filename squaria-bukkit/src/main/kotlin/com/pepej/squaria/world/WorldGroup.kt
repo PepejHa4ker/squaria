@@ -1,8 +1,8 @@
 package com.pepej.squaria.world
 
 import com.pepej.squaria.elements.Element
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.Animation3D
-import com.pepej.squaria.utils.ByteMap
 import java.util.*
 
 open class WorldGroup(var id: String) {

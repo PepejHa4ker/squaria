@@ -1,6 +1,6 @@
 package com.pepej.squaria.utils
 
-import net.minecraft.util.math.MathHelper
+import com.pepej.squaria.serialization.ByteMap
 import kotlin.math.*
 
 

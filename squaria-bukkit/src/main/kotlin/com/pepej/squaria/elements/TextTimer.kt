@@ -1,6 +1,7 @@
 package com.pepej.squaria.elements
 
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
+
 
 class TextTimer(id: String, vararg text: String) : Text(id, *text) {
     var timerDuration = -1L

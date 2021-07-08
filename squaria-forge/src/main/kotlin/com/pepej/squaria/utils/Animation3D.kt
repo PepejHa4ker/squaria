@@ -1,5 +1,7 @@
 package com.pepej.squaria.utils
 
+import com.pepej.squaria.serialization.ByteMap
+
 class Animation3D {
     var start: Params? = null
     var finish: Params? = null

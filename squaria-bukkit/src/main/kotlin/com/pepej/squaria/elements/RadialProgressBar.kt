@@ -1,6 +1,6 @@
 package com.pepej.squaria.elements
 
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 
 open class RadialProgressBar(id: String, var size: Int, var progress: Float) : Element<RadialProgressBar>(id, "RadialProgressBar") {
 

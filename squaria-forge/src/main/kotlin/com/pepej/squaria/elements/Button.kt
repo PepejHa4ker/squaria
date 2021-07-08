@@ -1,7 +1,7 @@
 package com.pepej.squaria.elements
 
 import com.pepej.squaria.Squaria
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.Easing
 import com.pepej.squaria.utils.Fluidity
 import com.pepej.squaria.utils.drawRect
@@ -9,22 +9,22 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
 
 class Button(params: ByteMap) : Rectangle(params) {
-    var textColor: Int
-    var text: String
-    var hoverColor: Int
-    var font: FontRenderer
-    var textWidth: Int
-    private var hoverAnimationProgress: Float
-    private var hoverAnimationFinish: Long
-    private var lastHoverState: Boolean
-    override val width: Float
+    var textColor = params.getInt("textColor", -1)
+    var text = params.getString("text")
+    var hoverColor = params.getInt("hoverColor", alterBrightness(super.color.orig, -20))
+    var font: FontRenderer = Minecraft.getMinecraft().fontRenderer
+    var textWidth = font.getStringWidth(text)
+    private var hoverAnimationProgress = 0.0f
+    private var hoverAnimationFinish = 0L
+    private var lastHoverState = false
+    override val width: Int
         get() = if (super.widthFluidity === Fluidity.WRAP_CONTENT) {
-            (textWidth + 5).toFloat()
+            (textWidth + 5)
         } else {
             if (super.widthFluidity === Fluidity.MATCH_PARENT){
-                (super.parent?.width ?: 0.0F) / super.scaleX.render
+                (   (super.parent?.width ?: 0.0F) / super.scaleX.render).toInt()
             } else {
-                super.fWidth.renderValue(Squaria.time)
+                super.fWidth.renderValue(Squaria.time).toInt()
             }
         }
     override var widthFluidity: Fluidity?
@@ -32,15 +32,15 @@ class Button(params: ByteMap) : Rectangle(params) {
         set(widthFluidity) {
             super.widthFluidity = widthFluidity
         }
-    override val height: Float
+    override val height: Int
         get() {
             return if (super.heightFluidity === Fluidity.WRAP_CONTENT) {
-                (font.FONT_HEIGHT + 2).toFloat()
+                (font.FONT_HEIGHT + 2)
             } else {
                 if (super.heightFluidity === Fluidity.MATCH_PARENT) {
-                        (super.parent?.height ?: 0.0F) / super.scaleY.render
+                    (   (super.parent?.height ?: 0.0F) / super.scaleY.render).toInt()
                 } else {
-                    super.fHeight.renderValue(Squaria.time)
+                    super.fHeight.renderValue(Squaria.time).toInt()
                 }
             }
         }
@@ -98,14 +98,6 @@ class Button(params: ByteMap) : Rectangle(params) {
     }
 
     init {
-        this.font = Minecraft.getMinecraft().fontRenderer
-        this.hoverAnimationProgress = 0.0f
-        this.hoverAnimationFinish = 0L
-        this.lastHoverState = false
         super.hoverable = params.getBoolean("hoverable", true)
-        this.text = params.getString("text")
-        this.hoverColor = params.getInt("hoverColor", alterBrightness(super.color.orig, -20))
-        this.textColor = params.getInt("textColor", -1)
-        this.textWidth = this.font.getStringWidth(this.text)
     }
 }

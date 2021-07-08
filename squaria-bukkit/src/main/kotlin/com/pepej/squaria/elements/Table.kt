@@ -1,7 +1,7 @@
 package com.pepej.squaria.elements
 
 import com.pepej.papi.text.Text.colorize
-import com.pepej.squaria.utils.ByteMap
+import com.pepej.squaria.serialization.ByteMap
 import java.util.*
 
 class Table(id: String) : Element<Table>(id, "Table") {
@@ -77,7 +77,7 @@ class Table(id: String) : Element<Table>(id, "Table") {
             }
             ++id
         }
-        map["cols"] = cols
+        map["columns"] = cols
         val rows = ByteMap()
         id = 0
         for (row in rows) {
@@ -109,7 +109,7 @@ class Table(id: String) : Element<Table>(id, "Table") {
     }
 
     class Column(name: String, val width: Int) {
-        var name: String
+        var name: String = colorize(name)
         var center = false
         var color = -1
         fun setCenter(flag: Boolean): Column {
@@ -122,8 +122,5 @@ class Table(id: String) : Element<Table>(id, "Table") {
             return this
         }
 
-        init {
-            this.name = colorize(name)
-        }
     }
 }

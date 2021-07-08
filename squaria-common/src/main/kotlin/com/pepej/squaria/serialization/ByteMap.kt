@@ -1,4 +1,4 @@
-package com.pepej.squaria.utils
+package com.pepej.squaria.serialization
 
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -18,6 +18,7 @@ private const val TYPE_MAP: Int = 9
 private const val TYPE_BYTE_ARRAY: Int = 10
 private const val TYPE_STRING_ARRAY: Int = 11
 private const val TYPE_MAP_ARRAY: Int = 12
+private const val TYPE_STRING_ARRAY_2D: Int = 13
 
 
 @Suppress("UNCHECKED_CAST")
@@ -75,6 +76,18 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
                                 val mapBytes = ByteArray(data.readInt())
                                 data.read(mapBytes, 0, mapBytes.size)
                                 array[i] = ByteMap(mapBytes)
+                            }
+                            this[key] = array
+                        }
+                        TYPE_STRING_ARRAY_2D -> {
+                            val array = arrayOfNulls<Array<String?>>(data.readInt())
+                            var i = 0
+                            while (i < array.size) {
+                                array[i] = arrayOfNulls(data.readInt())
+                                for (k in array[i]!!.indices) {
+                                    array[i]?.set(k, data.readUTF())
+                                }
+                                ++i
                             }
                             this[key] = array
                         }
@@ -161,7 +174,23 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
                                     out.writeInt(serialized.size)
                                     out.write(serialized)
                                 }
-                            } else -> {
+                            }
+                            Array<Array<String>>::class.java -> { // :(
+                                out.writeByte(20)
+                                val arr = value as Array<Array<String>>
+                                out.writeInt(arr.size)
+                                var i = 0
+                                while (i < arr.size) {
+                                    val arr0 = arr[i]
+                                    out.writeInt(arr0.size)
+                                    for (element in arr0) {
+                                        out.writeUTF(element)
+                                    }
+                                    ++i
+                                }
+
+                            }
+                            else -> {
                                 throw IllegalStateException("Unknown value type ${value?.javaClass} for key '$key'")
                             }
                         }
@@ -245,7 +274,13 @@ class ByteMap(bytes: ByteArray? = null) : HashMap<String, Any?>() {
         return value ?: default
     }
 
-    fun getMapArray(key: String): Array<ByteMap> = this[key] as Array<ByteMap>
+    fun get2DStringArray(key: String): Array<Array<String>> = this[key] as Array<Array<String>>
+    fun get2DStringArray(key: String?, default: Array<Array<String>>): Array<Array<String>> {
+        val value = this[key ?: return default] as Array<Array<String>>?
+        return value ?: default
+    }
+
+    fun getMapArray(key: String): Array<ByteMap>? = this[key] as Array<ByteMap>?
     fun getMapArray(key: String?, default: Array<ByteMap>): Array<ByteMap> {
         val value = this[key ?: return default] as Array<ByteMap>?
         return value ?: default
