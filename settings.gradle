@@ -1,0 +1,5 @@
+rootProject.name = 'squaria'
+include 'squaria-bukkit'
+include 'squaria-common'
+include 'squaria-forge'
+
