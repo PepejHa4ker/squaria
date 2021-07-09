@@ -3,16 +3,11 @@ package com.pepej.squaria.service
 import com.pepej.papi.events.Events
 import com.pepej.papi.terminable.TerminableConsumer
 import com.pepej.papi.terminable.module.TerminableModule
-import com.pepej.squaria.Squaria
 import com.pepej.squaria.Squaria.Companion.instance
 import com.pepej.squaria.elements.ProgressBar
-import com.pepej.squaria.elements.Rectangle
 import com.pepej.squaria.elements.Text
 import com.pepej.squaria.serialization.ByteMap
 import com.pepej.squaria.utils.IntColor
-import com.pepej.squaria.utils.OnClick
-import com.pepej.squaria.utils.Position
-import com.pepej.squaria.utils.Visibility
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.*
@@ -25,23 +20,17 @@ object PacketService : TerminableModule {
             .filter { it.entity is Player }
             .handler {
                 val player = it.entity as Player
-                val progressBar = ProgressBar("pg.test", 100f, 10f, ((player.health - it.damage) / player.maxHealth).toFloat())
-                progressBar.color = IntColor.RED
-                progressBar.duration = 1500
-                progressBar.setOffset(80, 210)
-                val text = Text("test.dmg", "Урон: " + (it.damage / 2.0).toString() + "❤")
-                text.hoverable  = true
-                text.color = IntColor.RED
-                text.hoverBackground = IntColor.M_BLUE_GREY_100
-                text.setOffset(100, 200)
-                text.duration = 1500L
-                instance.add(text, player)
-                instance.add(progressBar, player)
-
+                val map = ByteMap()
+                map["progress"] = ((player.health - it.damage) / player.maxHealth).toFloat()
+               SquariaElementService.editElementByID("squaria.progressbar.test", map, player)
             }
             .bindWith(consumer)
         Events.subscribe(PlayerJoinEvent::class.java)
             .handler {
+                val healthProgressBar = ProgressBar("squaria.progressbar.test", 200f, 5f, (it.player.health / it.player.maxHealth).toFloat())
+                healthProgressBar.color = IntColor.LIGHT_RED
+                healthProgressBar.setOffset(300, 400)
+                SquariaElementService.addElement(healthProgressBar, it.player)
             }
             .bindWith(consumer)
         Events.merge(PlayerEvent::class.java, PlayerQuitEvent::class.java, PlayerKickEvent::class.java)
@@ -76,7 +65,7 @@ object PacketService : TerminableModule {
         }
     }
 
-    fun sendPacket(bytes: ByteArray, vararg players: Player) {
+    fun sendPacket(bytes: ByteArray, players: Array<out Player>) {
         players.forEach {
             sendPacket(bytes, it)
         }

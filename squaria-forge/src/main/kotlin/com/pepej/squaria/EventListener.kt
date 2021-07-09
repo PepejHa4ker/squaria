@@ -17,6 +17,7 @@ import org.lwjgl.input.Mouse
 object EventListener {
 
 
+
     @SubscribeEvent
     fun onPacketEvent(event: FMLNetworkEvent.ClientCustomPacketEvent) {
         val channel = event.packet.channel()
@@ -55,7 +56,48 @@ object EventListener {
             "add" -> {
                 Squaria.instance.gui.addElement(GuiElementWrapper(map, Squaria.instance.gui))
             }
+
+            "edit" -> {
+                val element = Squaria.instance.gui.getElement(map.getString("id"))
+                element?.edit(map.getMap("data")!!)
+            }
+            "remove:id" -> {
+                Squaria.instance.gui.removeElement(map.getString("id"))
+            }
+
+            "remove:all" -> {
+                Squaria.instance.gui.clear()
+            }
         }
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
