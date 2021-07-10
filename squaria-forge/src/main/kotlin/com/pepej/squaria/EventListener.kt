@@ -5,6 +5,7 @@ import com.pepej.squaria.Squaria.Companion.mc
 import com.pepej.squaria.gui.GuiElementWrapper
 import com.pepej.squaria.gui.GuiRenderLayer
 import com.pepej.squaria.serialization.ByteMap
+import com.pepej.squaria.utils.openUrl
 import com.pepej.squaria.world.Element3D
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -52,6 +53,11 @@ object EventListener {
 
     private fun handleAction(map: ByteMap) {
         when (map.getString("%")) {
+
+
+            "url" -> {
+                openUrl(map.getString("url"))
+            }
 
             "add" -> {
                 Squaria.instance.gui.addElement(GuiElementWrapper(map, Squaria.instance.gui))
